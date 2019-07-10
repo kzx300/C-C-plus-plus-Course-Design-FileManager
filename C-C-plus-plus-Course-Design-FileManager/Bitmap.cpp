@@ -45,49 +45,45 @@ bool Bitmap::Create(HDC hDC, LPCWSTR szFileName)
 	// 读取位图文件的头部信息
 	BITMAPFILEHEADER  bmfHeader;//储存位图文件的头部信息
 	DWORD             dwBytesRead;//储存已经读取到的字节数
-	bool bOK = ReadFile(hFile, &bmfHeader, sizeof(BITMAPFILEHEADER),
-		&dwBytesRead, nullptr);
-	if ((!bOK) || (dwBytesRead != sizeof(BITMAPFILEHEADER)) ||
-		(bmfHeader.bfType != 0x4D42))
+	bool bOK = ReadFile(hFile, &bmfHeader, sizeof(BITMAPFILEHEADER),//读取文件，将读取到的信息储存在dwBytesRead中
+		&dwBytesRead, nullptr);//bOK表示是否读取成功
+	if ((!bOK) || (dwBytesRead != sizeof(BITMAPFILEHEADER)) || (bmfHeader.bfType != 0x4D42))//检查文件头是否读取成功
 	{
 		CloseHandle(hFile);
 		return false;
 	}
 
-	BITMAPINFO* pBitmapInfo = (new BITMAPINFO);
+	BITMAPINFO* pBitmapInfo = (new BITMAPINFO);//储存位图信息
 	if (pBitmapInfo != nullptr)
 	{
-		// Read the bitmap info header
-		bOK = ReadFile(hFile, pBitmapInfo, sizeof(BITMAPINFOHEADER),
-			&dwBytesRead, nullptr);
-		if ((!bOK) || (dwBytesRead != sizeof(BITMAPINFOHEADER)))
-		{
+		// 读取位图头信息
+		bOK = ReadFile(hFile, pBitmapInfo, sizeof(BITMAPINFOHEADER),&dwBytesRead, nullptr);//检查位图头部信息是否读取成功
+		if ((!bOK) || (dwBytesRead != sizeof(BITMAPINFOHEADER)))                           
+		{                                                                              
 			CloseHandle(hFile);
 			Free();
 			return false;
 		}
 
-		// Store the width and height of the bitmap
-		m_iWidth = static_cast<int>(pBitmapInfo->bmiHeader.biWidth);//(int)pBitmapInfo->bmiHeader.biWidth;
-		m_iHeight = static_cast<int>(pBitmapInfo->bmiHeader.biHeight);//(int)pBitmapInfo->bmiHeader.biHeight;
-
-		// Get a handle to the bitmap and copy the image bits
-		PBYTE pBitmapBits;
-		m_hBitmap = CreateDIBSection(hDC, pBitmapInfo, DIB_RGB_COLORS,
-			(PVOID*)&pBitmapBits, nullptr, 0);
+		//储存位图的长度和宽度
+		m_iWidth = static_cast<int>(pBitmapInfo->bmiHeader.biWidth);//读取宽度
+		m_iHeight = static_cast<int>(pBitmapInfo->bmiHeader.biHeight);//读取高度
+		// 得到一个位图句柄并拷贝这个位图的数据
+		PBYTE pBitmapBits;//储存位图数据
+		m_hBitmap = CreateDIBSection(hDC, pBitmapInfo, DIB_RGB_COLORS,(PVOID*)&pBitmapBits, nullptr, 0);//创建一个句柄，与位图绑定
 		if ((m_hBitmap != nullptr) && (pBitmapBits != nullptr))
 		{
 			SetFilePointer(hFile, bmfHeader.bfOffBits, nullptr, FILE_BEGIN);
 			bOK = ReadFile(hFile, pBitmapBits, pBitmapInfo->bmiHeader.biSizeImage,
 				&dwBytesRead, nullptr);
 			if (bOK)
-				return TRUE;
+				return true;
 		}
 	}
 
-	// Something went wrong, so cleanup everything
+	//出现错误，执行清理
 	Free();
-	return FALSE;
+	return false;
 }
 
 bool Bitmap::Create(HDC hDC, UINT uiResID, HINSTANCE hInstance)
