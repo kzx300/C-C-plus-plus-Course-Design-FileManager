@@ -27,12 +27,18 @@
     <ClInclude Include="C-C-plus-plus-Course-Design-FileManager.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Bitmap.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="C-C-plus-plus-Course-Design-FileManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Bitmap.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
