@@ -4,7 +4,7 @@
 
 void Bitmap::Free()
 {
-	if (m_hBitmap != nullptr)
+	if (m_hBitmap != nullptr)//如果位图句柄不是空的，清理位图句柄
 	{
 		DeleteObject(m_hBitmap);
 		m_hBitmap = nullptr;
@@ -89,15 +89,15 @@ bool Bitmap::Create(HDC hDC, LPCWSTR szFileName)
 
 bool Bitmap::Create(HDC hDC, UINT uiResID, HINSTANCE hInstance)
 {
-	// Free any previous DIB info
+	// 释放位图
 	Free();
 
-	// Find the bitmap resource
-	HRSRC hResInfo = FindResource(hInstance, MAKEINTRESOURCE(uiResID), RT_BITMAP);
+	// 寻找位图信息
+	HRSRC hResInfo = FindResource(hInstance, MAKEINTRESOURCE(uiResID), RT_BITMAP);//储存资源信息
 	if (hResInfo == NULL)
 		return FALSE;
 
-	// Load the bitmap resource
+	//导入位图资源
 	HGLOBAL hMemBitmap = LoadResource(hInstance, hResInfo);
 	if (hMemBitmap == NULL)
 		return FALSE;
