@@ -1,3 +1,4 @@
+//è¿™ä¸ªæ–‡ä»¶ä¸ºä½å›¾ç±»çš„å®ç°ï¼Œä¸å®Œå–„ï¼Œéœ€è¦è¡¥å……
 #include "stdafx.h"
 #include "Bitmap.h"
 
@@ -36,28 +37,28 @@ Bitmap::~Bitmap()
 
 bool Bitmap::Create(HDC hDC, LPCWSTR szFileName)
 {
-	Free();// ÊÍ·ÅÏÈÇ°µÄÎ»Í¼ĞÅÏ¢£¬ÎŞÂÛÆäÊÇ·ñ´æÔÚ
+	Free();// é‡Šæ”¾å…ˆå‰çš„ä½å›¾ä¿¡æ¯ï¼Œæ— è®ºå…¶æ˜¯å¦å­˜åœ¨
 
-	HANDLE hFile = CreateFile(szFileName, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);//´ò¿ªÒ»¸öÎ»Í¼ÎÄ¼ş                          
-	if (hFile == INVALID_HANDLE_VALUE)//¼ì²éÎÄ¼şÊÇ·ñ´ò¿ª³É¹¦                                        
+	HANDLE hFile = CreateFile(szFileName, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);//æ‰“å¼€ä¸€ä¸ªä½å›¾æ–‡ä»¶                          
+	if (hFile == INVALID_HANDLE_VALUE)//æ£€æŸ¥æ–‡ä»¶æ˜¯å¦æ‰“å¼€æˆåŠŸ                                        
 		return false;                                          
 
-	// ¶ÁÈ¡Î»Í¼ÎÄ¼şµÄÍ·²¿ĞÅÏ¢
-	BITMAPFILEHEADER  bmfHeader;//´¢´æÎ»Í¼ÎÄ¼şµÄÍ·²¿ĞÅÏ¢
-	DWORD             dwBytesRead;//´¢´æÒÑ¾­¶ÁÈ¡µ½µÄ×Ö½ÚÊı
-	bool bOK = ReadFile(hFile, &bmfHeader, sizeof(BITMAPFILEHEADER),//¶ÁÈ¡ÎÄ¼ş£¬½«¶ÁÈ¡µ½µÄĞÅÏ¢´¢´æÔÚdwBytesReadÖĞ
-		&dwBytesRead, nullptr);//bOK±íÊ¾ÊÇ·ñ¶ÁÈ¡³É¹¦
-	if ((!bOK) || (dwBytesRead != sizeof(BITMAPFILEHEADER)) || (bmfHeader.bfType != 0x4D42))//¼ì²éÎÄ¼şÍ·ÊÇ·ñ¶ÁÈ¡³É¹¦
+	// è¯»å–ä½å›¾æ–‡ä»¶çš„å¤´éƒ¨ä¿¡æ¯
+	BITMAPFILEHEADER  bmfHeader;//å‚¨å­˜ä½å›¾æ–‡ä»¶çš„å¤´éƒ¨ä¿¡æ¯
+	DWORD             dwBytesRead;//å‚¨å­˜å·²ç»è¯»å–åˆ°çš„å­—èŠ‚æ•°
+	bool bOK = ReadFile(hFile, &bmfHeader, sizeof(BITMAPFILEHEADER),//è¯»å–æ–‡ä»¶ï¼Œå°†è¯»å–åˆ°çš„ä¿¡æ¯å‚¨å­˜åœ¨dwBytesReadä¸­
+		&dwBytesRead, nullptr);//bOKè¡¨ç¤ºæ˜¯å¦è¯»å–æˆåŠŸ
+	if ((!bOK) || (dwBytesRead != sizeof(BITMAPFILEHEADER)) || (bmfHeader.bfType != 0x4D42))//æ£€æŸ¥æ–‡ä»¶å¤´æ˜¯å¦è¯»å–æˆåŠŸ
 	{
 		CloseHandle(hFile);
 		return false;
 	}
 
-	BITMAPINFO* pBitmapInfo = (new BITMAPINFO);//´¢´æÎ»Í¼ĞÅÏ¢
+	BITMAPINFO* pBitmapInfo = (new BITMAPINFO);//å‚¨å­˜ä½å›¾ä¿¡æ¯
 	if (pBitmapInfo != nullptr)
 	{
-		// ¶ÁÈ¡Î»Í¼Í·ĞÅÏ¢
-		bOK = ReadFile(hFile, pBitmapInfo, sizeof(BITMAPINFOHEADER),&dwBytesRead, nullptr);//¼ì²éÎ»Í¼Í·²¿ĞÅÏ¢ÊÇ·ñ¶ÁÈ¡³É¹¦
+		// è¯»å–ä½å›¾å¤´ä¿¡æ¯
+		bOK = ReadFile(hFile, pBitmapInfo, sizeof(BITMAPINFOHEADER),&dwBytesRead, nullptr);//æ£€æŸ¥ä½å›¾å¤´éƒ¨ä¿¡æ¯æ˜¯å¦è¯»å–æˆåŠŸ
 		if ((!bOK) || (dwBytesRead != sizeof(BITMAPINFOHEADER)))                           
 		{                                                                              
 			CloseHandle(hFile);
@@ -65,12 +66,12 @@ bool Bitmap::Create(HDC hDC, LPCWSTR szFileName)
 			return false;
 		}
 
-		//´¢´æÎ»Í¼µÄ³¤¶ÈºÍ¿í¶È
-		m_iWidth = static_cast<int>(pBitmapInfo->bmiHeader.biWidth);//¶ÁÈ¡¿í¶È
-		m_iHeight = static_cast<int>(pBitmapInfo->bmiHeader.biHeight);//¶ÁÈ¡¸ß¶È
-		// µÃµ½Ò»¸öÎ»Í¼¾ä±ú²¢¿½±´Õâ¸öÎ»Í¼µÄÊı¾İ
-		PBYTE pBitmapBits;//´¢´æÎ»Í¼Êı¾İ
-		m_hBitmap = CreateDIBSection(hDC, pBitmapInfo, DIB_RGB_COLORS,(PVOID*)&pBitmapBits, nullptr, 0);//´´½¨Ò»¸ö¾ä±ú£¬ÓëÎ»Í¼°ó¶¨
+		//å‚¨å­˜ä½å›¾çš„é•¿åº¦å’Œå®½åº¦
+		m_iWidth = static_cast<int>(pBitmapInfo->bmiHeader.biWidth);//è¯»å–å®½åº¦
+		m_iHeight = static_cast<int>(pBitmapInfo->bmiHeader.biHeight);//è¯»å–é«˜åº¦
+		// å¾—åˆ°ä¸€ä¸ªä½å›¾å¥æŸ„å¹¶æ‹·è´è¿™ä¸ªä½å›¾çš„æ•°æ®
+		PBYTE pBitmapBits;//å‚¨å­˜ä½å›¾æ•°æ®
+		m_hBitmap = CreateDIBSection(hDC, pBitmapInfo, DIB_RGB_COLORS,(PVOID*)&pBitmapBits, nullptr, 0);//åˆ›å»ºä¸€ä¸ªå¥æŸ„ï¼Œä¸ä½å›¾ç»‘å®š
 		if ((m_hBitmap != nullptr) && (pBitmapBits != nullptr))
 		{
 			SetFilePointer(hFile, bmfHeader.bfOffBits, nullptr, FILE_BEGIN);
@@ -81,7 +82,7 @@ bool Bitmap::Create(HDC hDC, LPCWSTR szFileName)
 		}
 	}
 
-	//³öÏÖ´íÎó£¬Ö´ĞĞÇåÀí
+	//å‡ºç°é”™è¯¯ï¼Œæ‰§è¡Œæ¸…ç†
 	Free();
 	return false;
 }
